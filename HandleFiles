@@ -1,0 +1,28 @@
+<?php
+
+function uploadFile($file, $maxSize, $allowedTypes): string {
+    
+    if (!isset($file) || $file['error'] === UPLOAD_ERR_NO_FILE) {
+        throw new Exception("No file uploaded.");
+    }
+
+    if ($file['error'] !== UPLOAD_ERR_OK) {
+        throw new Exception("Error uploading file.");
+    }
+
+    if ($file['size'] > $maxSize) {
+        throw new Exception("File is too large (max size is $maxSize bytes).");
+    }
+
+    if (!in_array($file['type'], $allowedTypes)) {
+        throw new Exception("Invalid file type. Allowed types: " . implode(', ', $allowedTypes));
+    }
+
+    $uploadPath = 'uploads/' . basename($file['name']);
+    if (!move_uploaded_file($file['tmp_name'], $uploadPath)) {
+        throw new Exception("Failed to upload file.");
+    }
+    return "File uploaded successfully!";
+}
+
+?>
